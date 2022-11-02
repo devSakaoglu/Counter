@@ -11,14 +11,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
-    private static  String TAG = "now :";
 
     MyCounter counter=new MyCounter();
     public Button button;
     public Button inputButton;
     public  EditText timeInput;
     public  TextView textView2;
-    public long customTimerValue;
+    public long customTimerValue=0;
+    public static final String TAG= MainActivity.class.getSimpleName().toString();
 
 
     public void PressButton(){
@@ -36,7 +36,14 @@ public class MainActivity extends AppCompatActivity {
         inputButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                customTimerValue= Long.parseLong( timeInput.getText().toString());
+
+                try {
+                    customTimerValue= Long.parseLong( timeInput.getText().toString());
+                }catch (Exception e){
+                    Log.d(TAG, e.getMessage().toString());
+                    customTimerValue=15000;
+                }
+
                 textView2.setText(timeInput.getText().toString());
                 button.setText("Start");
             }
@@ -66,7 +73,11 @@ public  void startStop(long customTimerValue){
         stopTimer();
     }else
     {
-        startTimer(customTimerValue);
+        if(customTimerValue!=0){
+            startTimer(customTimerValue);
+        }else {
+            startTimer(5000);
+        }
 
     }
 
@@ -108,6 +119,7 @@ public void  stopTimer(){
 }
 public void  updateTime(long l){
     counter.timeLeftMiliSeconds=l;
+    Log.i(TAG, "updateTime: ");
 
 }
     @Override
@@ -116,7 +128,6 @@ public void  updateTime(long l){
         Log.d(TAG,"onStart");
         PressButton();
         inputButtonOnClick();
-
     }
 
     @Override
@@ -131,7 +142,6 @@ public void  updateTime(long l){
         Log.d(TAG,"onStop");
 
     }
-
     @Override
     protected void onPause() {
         super.onPause();
